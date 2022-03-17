@@ -38,6 +38,13 @@ export async function getUrl(req, res) {
       return res.status(404).send("A URL encurtada não existe");
     }
 
+    await connection.query(
+      `UPDATE urls
+        SET "visitCount" = "visitCount" + 1
+      WHERE "shortUrl"=$1`,
+      [shortUrl]
+    );
+
     const [url] = urlResult.rows;
 
     res.status(200).send(url);
