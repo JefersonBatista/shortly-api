@@ -46,3 +46,25 @@ export async function getUrl(req, res) {
     res.status(500).send("Houve um erro interno no servidor");
   }
 }
+
+export async function deleteUrl(req, res) {
+  const id = parseInt(req.params.id);
+
+  const { user } = res.locals;
+
+  try {
+    const urlDeletionResult = await connection.query(
+      `DELETE FROM urls WHERE id=$1 AND "userId"=$2`,
+      [id, user.id]
+    );
+
+    if (urlDeletionResult.rowCount < 1) {
+      return res.status(401).send("A URL encurtada com esse ID não é sua");
+    }
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Houve um erro interno no servidor");
+  }
+}
