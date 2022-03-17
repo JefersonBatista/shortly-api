@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { shortenUrl } from "../controllers/urlController.js";
+import { getUrl, shortenUrl } from "../controllers/urlController.js";
 
 import { validateSchemaMiddleware } from "../middlewares/validateSchemaMiddleware.js";
 import { validateTokenMiddleware } from "../middlewares/validateTokenMiddleware.js";
@@ -14,5 +14,6 @@ urlRouter.post(
   validateTokenMiddleware,
   shortenUrl
 );
+urlRouter.get("/urls/:shortUrl", getUrl);
 
 export default urlRouter;
