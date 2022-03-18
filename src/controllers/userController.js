@@ -74,9 +74,36 @@ export async function getUserById(req, res) {
     res.status(200).send({
       id: userId,
       name,
-      visitCount: visitCount ? visitCount : 0,
+      visitCount: visitCount ? parseInt(visitCount) : 0,
       shortenedUrls,
     });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+export async function rankUsers(_, res) {
+  try {
+    const rankingResult = await connection.query(
+      `SELECT
+        users.id, name,
+        COUNT("shortUrl") AS "linksCount",
+        SUM("visitCount") AS "visitCount"
+      FROM users
+        LEFT JOIN urls ON users.id=urls."userId"
+      GROUP BY users.id
+      ORDER BY "visitCount" DESC NULLS LAST
+      LIMIT 10`
+    );
+
+    const ranking = rankingResult.rows.map((row) => ({
+      ...row,
+      linksCount: parseInt(row.linksCount),
+      visitCount: row.visitCount ? parseInt(row.visitCount) : 0,
+    }));
+
+    res.status(200).send(ranking);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
