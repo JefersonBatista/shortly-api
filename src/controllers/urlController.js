@@ -45,9 +45,9 @@ export async function getUrl(req, res) {
       [shortUrl]
     );
 
-    const [url] = urlResult.rows;
+    const [{ url }] = urlResult.rows;
 
-    res.status(200).send(url);
+    res.redirect(url);
   } catch (error) {
     console.error(error);
     res.status(500).send("Houve um erro interno no servidor");
